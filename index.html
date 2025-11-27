@@ -320,21 +320,39 @@
                 const data = await response.json();
                 
                 console.log('Respuesta completa:', data); // Para debug
+                console.log('Tipo de data:', typeof data);
+                console.log('Es array?:', Array.isArray(data));
                 
                 // Procesar la data como viene de n8n
                 let asesores = [];
                 
-                if (data.data && Array.isArray(data.data)) {
-                    // Si viene como { data: [...] }
+                // Si viene como objeto con propiedad "data"
+                if (data && typeof data === 'object' && data.data && Array.isArray(data.data)) {
                     asesores = data.data;
-                } else if (Array.isArray(data)) {
-                    // Si viene como array directo
+                    console.log('Caso 1: data.data array', asesores);
+                } 
+                // Si viene como array directo
+                else if (Array.isArray(data)) {
                     asesores = data;
-                } else if (typeof data === 'string') {
-                    // Si viene como string JSON
-                    asesores = JSON.parse(data);
+                    console.log('Caso 2: array directo', asesores);
+                } 
+                // Si viene como objeto único (un solo item)
+                else if (data && typeof data === 'object' && data.nombre) {
+                    asesores = [data];
+                    console.log('Caso 3: objeto único', asesores);
+                }
+                // Si viene como string JSON
+                else if (typeof data === 'string') {
+                    try {
+                        const parsed = JSON.parse(data);
+                        asesores = Array.isArray(parsed) ? parsed : (parsed.data || [parsed]);
+                        console.log('Caso 4: string parseado', asesores);
+                    } catch (e) {
+                        console.error('Error al parsear JSON:', e);
+                    }
                 }
                 
+                console.log('Asesores finales:', asesores);
                 renderTable(asesores);
                 
             } catch (error) {
