@@ -319,9 +319,10 @@
 
                 const data = await response.json();
                 
-                // Aquí procesarás los datos que vienen de n8n
-                // Por ahora, mostramos datos de ejemplo
-                renderTable(data);
+                // Extraer el array de datos si viene dentro de un objeto
+                const asesores = data.data || data;
+                
+                renderTable(asesores);
                 
             } catch (error) {
                 console.error('Error:', error);
