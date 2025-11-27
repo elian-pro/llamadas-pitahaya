@@ -319,8 +319,21 @@
 
                 const data = await response.json();
                 
-                // Extraer el array de datos si viene dentro de un objeto
-                const asesores = data.data || data;
+                console.log('Respuesta completa:', data); // Para debug
+                
+                // Procesar la data como viene de n8n
+                let asesores = [];
+                
+                if (data.data && Array.isArray(data.data)) {
+                    // Si viene como { data: [...] }
+                    asesores = data.data;
+                } else if (Array.isArray(data)) {
+                    // Si viene como array directo
+                    asesores = data;
+                } else if (typeof data === 'string') {
+                    // Si viene como string JSON
+                    asesores = JSON.parse(data);
+                }
                 
                 renderTable(asesores);
                 
