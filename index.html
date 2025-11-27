@@ -4,6 +4,97 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard de Monitoreo - ZEBRA</title>
+    <script>
+        // Definir sortData ANTES de todo para que esté disponible desde el inicio
+        let currentData = [];
+        let currentSort = { column: null, direction: null };
+        
+        function sortData(column) {
+            console.log('sortData llamado con columna:', column);
+            console.log('Datos actuales:', currentData);
+            
+            if (!currentData || currentData.length === 0) {
+                alert('Primero debes cargar los datos presionando "Actualizar"');
+                return;
+            }
+
+            if (currentSort.column === column) {
+                if (currentSort.direction === 'asc') {
+                    currentSort.direction = 'desc';
+                } else if (currentSort.direction === 'desc') {
+                    currentSort.direction = null;
+                    currentSort.column = null;
+                } else {
+                    currentSort.direction = 'asc';
+                }
+            } else {
+                currentSort.column = column;
+                currentSort.direction = 'asc';
+            }
+
+            let sortedData = [...currentData];
+            
+            if (currentSort.direction) {
+                sortedData.sort((a, b) => {
+                    let valA, valB;
+                    
+                    if (column === 'nombre') {
+                        valA = (a.nombre || '').toLowerCase();
+                        valB = (b.nombre || '').toLowerCase();
+                    } else if (column === 'llamadas') {
+                        valA = parseInt(a.llamadasTotales) || 0;
+                        valB = parseInt(b.llamadasTotales) || 0;
+                    }
+                    
+                    if (currentSort.direction === 'asc') {
+                        return valA > valB ? 1 : valA < valB ? -1 : 0;
+                    } else {
+                        return valA < valB ? 1 : valA > valB ? -1 : 0;
+                    }
+                });
+            }
+
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+
+            if (currentSort.direction && currentSort.column) {
+                const th = document.querySelector(`th[data-sort="${currentSort.column}"]`);
+                if (th) {
+                    th.classList.add(`sort-${currentSort.direction}`);
+                }
+            }
+
+            renderTable(sortedData);
+        }
+        
+        function renderTable(data) {
+            const tableBody = document.getElementById('tableBody');
+            const resultsInfo = document.getElementById('resultsInfo');
+            
+            if (!data || data.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="2" class="loading">No se encontraron resultados</td></tr>';
+                resultsInfo.textContent = 'Mostrando 0 registros';
+                return;
+            }
+
+            let html = '';
+            data.forEach(asesor => {
+                const nombre = asesor.nombre || 'Sin nombre';
+                const llamadas = asesor.llamadasTotales !== undefined ? asesor.llamadasTotales : 0;
+                
+                html += `
+                    <tr>
+                        <td>${nombre}</td>
+                        <td>${llamadas}</td>
+                    </tr>
+                `;
+            });
+
+            tableBody.innerHTML = html;
+            resultsInfo.textContent = `Mostrando ${data.length} de ${data.length} registros`;
+        }
+    </script>
     <style>
         * {
             margin: 0;
