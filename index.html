@@ -339,9 +339,10 @@
             const tableBody = document.getElementById('tableBody');
             const resultsInfo = document.getElementById('resultsInfo');
             
-            // Aquí deberás adaptar según la estructura que retorne n8n
-            // Este es un ejemplo de cómo procesar los datos
-            if (!data || !Array.isArray(data) || data.length === 0) {
+            console.log('Datos recibidos:', data); // Para debug
+            
+            // Si no hay datos
+            if (!data || data.length === 0) {
                 tableBody.innerHTML = '<tr><td colspan="2" class="loading">No se encontraron resultados</td></tr>';
                 resultsInfo.textContent = 'Mostrando 0 registros';
                 return;
@@ -349,10 +350,13 @@
 
             let html = '';
             data.forEach(asesor => {
+                const nombre = asesor.nombre || 'Sin nombre';
+                const llamadas = asesor.llamadasTotales !== undefined ? asesor.llamadasTotales : 0;
+                
                 html += `
                     <tr>
-                        <td>${asesor.nombre}</td>
-                        <td>${asesor.llamadasTotales}</td>
+                        <td>${nombre}</td>
+                        <td>${llamadas}</td>
                     </tr>
                 `;
             });
