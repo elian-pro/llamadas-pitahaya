@@ -231,6 +231,29 @@
             text-align: left;
             font-weight: 600;
             font-size: 14px;
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+        }
+
+        th:hover {
+            background-color: #2a2a2a;
+        }
+
+        th.sortable::after {
+            content: ' ⇅';
+            opacity: 0.3;
+            font-size: 12px;
+        }
+
+        th.sort-asc::after {
+            content: ' ↑';
+            opacity: 1;
+        }
+
+        th.sort-desc::after {
+            content: ' ↓';
+            opacity: 1;
         }
 
         @media (max-width: 768px) {
@@ -331,8 +354,8 @@
             <table>
                 <thead>
                     <tr>
-                        <th>Asesor</th>
-                        <th>Llamadas Totales</th>
+                        <th class="sortable" data-sort="nombre">Asesor</th>
+                        <th class="sortable" data-sort="llamadas">Llamadas Totales</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -458,7 +481,5 @@
             resultsInfo.textContent = `Mostrando ${data.length} de ${data.length} registros`;
         }
     </script>
-</body>
-</html>
 </body>
 </html>
