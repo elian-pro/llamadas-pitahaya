@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de Monitoro - ZEBRA</title>
+    <title>Registro de llamadas - ZEBRA</title>
     <style>
         * {
             margin: 0;
@@ -234,7 +234,7 @@
     <div class="header">
         <div style="display: flex; align-items: center; gap: 40px;">
             <div class="logo">ZEBRA</div>
-            <div class="title">Dashboard de Monitoro</div>
+            <div class="title">Registro de llamadas</div>
         </div>
     </div>
 
@@ -319,37 +319,30 @@
 
                 const data = await response.json();
                 
-                console.log('Respuesta completa:', data); // Para debug
-                console.log('Tipo de data:', typeof data);
-                console.log('Es array?:', Array.isArray(data));
+                console.log('Respuesta completa:', data);
                 
                 // Procesar la data como viene de n8n
                 let asesores = [];
                 
+                // Si es un array con un objeto que tiene "data"
+                if (Array.isArray(data) && data.length > 0 && data[0].data) {
+                    asesores = data[0].data;
+                    console.log('Caso 1: Array con objeto.data', asesores);
+                }
                 // Si viene como objeto con propiedad "data"
-                if (data && typeof data === 'object' && data.data && Array.isArray(data.data)) {
+                else if (data && typeof data === 'object' && data.data && Array.isArray(data.data)) {
                     asesores = data.data;
-                    console.log('Caso 1: data.data array', asesores);
+                    console.log('Caso 2: objeto.data array', asesores);
                 } 
                 // Si viene como array directo
                 else if (Array.isArray(data)) {
                     asesores = data;
-                    console.log('Caso 2: array directo', asesores);
+                    console.log('Caso 3: array directo', asesores);
                 } 
                 // Si viene como objeto único (un solo item)
                 else if (data && typeof data === 'object' && data.nombre) {
                     asesores = [data];
-                    console.log('Caso 3: objeto único', asesores);
-                }
-                // Si viene como string JSON
-                else if (typeof data === 'string') {
-                    try {
-                        const parsed = JSON.parse(data);
-                        asesores = Array.isArray(parsed) ? parsed : (parsed.data || [parsed]);
-                        console.log('Caso 4: string parseado', asesores);
-                    } catch (e) {
-                        console.error('Error al parsear JSON:', e);
-                    }
+                    console.log('Caso 4: objeto único', asesores);
                 }
                 
                 console.log('Asesores finales:', asesores);
