@@ -275,11 +275,11 @@
             <div class="filter-row">
                 <div class="filter-group">
                     <label class="filter-label">Fecha Desde</label>
-                    <input type="datetime-local" id="fechaDesde" class="filter-input">
+                    <input type="date" id="fechaDesde" class="filter-input">
                 </div>
                 <div class="filter-group">
                     <label class="filter-label">Fecha Hasta</label>
-                    <input type="datetime-local" id="fechaHasta" class="filter-input">
+                    <input type="date" id="fechaHasta" class="filter-input">
                 </div>
                 <button class="update-btn" id="actualizarBtn">Actualizar</button>
             </div>
@@ -407,6 +407,12 @@
                 return;
             }
 
+            // Agregar horas automáticamente
+            var fechaDesdeCompleta = fechaDesde + ' 00:01';
+            var fechaHastaCompleta = fechaHasta + ' 23:59';
+
+            console.log('Fechas enviadas:', { desde: fechaDesdeCompleta, hasta: fechaHastaCompleta });
+
             btn.disabled = true;
             btn.textContent = 'Consultando...';
             tableBody.innerHTML = '<tr><td colspan="2" class="loading">Cargando datos...</td></tr>';
@@ -416,8 +422,8 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    fechaDesde: fechaDesde,
-                    fechaHasta: fechaHasta
+                    fechaDesde: fechaDesdeCompleta,
+                    fechaHasta: fechaHastaCompleta
                 })
             })
             .then(function(response) {
