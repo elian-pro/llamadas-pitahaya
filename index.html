@@ -74,12 +74,73 @@
             padding: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             margin-bottom: 20px;
+            position: relative;
+            padding-top: 80px;
         }
 
         @media (min-width: 768px) {
             .filter-card {
                 padding: 30px;
+                padding-top: 30px;
                 margin-bottom: 30px;
+            }
+        }
+
+        .total-calls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #4a5568;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.3s, transform 0.3s;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .total-calls.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .total-calls-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.9;
+            margin-bottom: 4px;
+            white-space: nowrap;
+        }
+
+        .total-calls-number {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        @media (max-width: 768px) {
+            .total-calls {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin-bottom: 20px;
+                text-align: center;
+                transform: none;
+                float: none;
+            }
+            
+            .total-calls.show {
+                transform: none;
+            }
+            
+            .filter-card {
+                padding-top: 20px;
             }
         }
 
@@ -87,6 +148,7 @@
             font-size: 20px;
             font-weight: 600;
             margin-bottom: 25px;
+            clear: both;
         }
 
         .filter-row {
@@ -473,11 +535,20 @@
         function renderTable(data) {
             var tableBody = document.getElementById('tableBody');
             var resultsInfo = document.getElementById('resultsInfo');
+            var totalCallsElement = document.getElementById('totalCalls');
+            var totalCallsNumber = document.getElementById('totalCallsNumber');
             
             if (!data || data.length === 0) {
                 tableBody.innerHTML = '<tr><td colspan="2" class="loading">No se encontraron resultados</td></tr>';
                 resultsInfo.textContent = 'Mostrando 0 registros';
+                totalCallsElement.classList.remove('show');
                 return;
+            }
+
+            // Calcular total de llamadas
+            var totalLlamadas = 0;
+            for (var i = 0; i < data.length; i++) {
+                totalLlamadas += parseInt(data[i].llamadasTotales) || 0;
             }
 
             var html = '';
@@ -491,6 +562,10 @@
 
             tableBody.innerHTML = html;
             resultsInfo.textContent = 'Mostrando ' + data.length + ' de ' + data.length + ' registros';
+            
+            // Mostrar total con animación
+            totalCallsNumber.textContent = totalLlamadas.toLocaleString('es-MX');
+            totalCallsElement.classList.add('show');
         }
     </script>
 </body>
